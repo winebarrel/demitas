@@ -3,6 +3,7 @@ package demitas
 import (
 	"fmt"
 	"io/ioutil"
+	"path/filepath"
 
 	jsonpatch "github.com/evanphx/json-patch"
 	"github.com/winebarrel/demitas/utils"
@@ -23,7 +24,13 @@ func NewServiceDefinition(path string) (*ServiceDefinition, error) {
 		return nil, fmt.Errorf("Failed to load ECS service definition: %w: %s", err, path)
 	}
 
-	if !utils.IsJSON(content) {
+	if filepath.Ext(path) == ".jsonnet" {
+		content, err = utils.ParseJsonnet(filepath.Base(path), content)
+
+		if err != nil {
+			return nil, fmt.Errorf("Failed to parse ECS service definition jsonnet: %w: %s", err, path)
+		}
+	} else if !utils.IsJSON(content) {
 		return nil, fmt.Errorf("ECS service definition is not JSON: %s", path)
 	}
 

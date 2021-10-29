@@ -10,9 +10,9 @@ demitas - Wrapper for ecspresso that creates task definitions at run time.
     -h --help                         Displays help with available flag, subcommand, and positional value parameters.
        --ecspresso-cmd                ecspresso command path. (default: ecspresso)
        --ecspresso-config-src         ecspresso config source path. (default: ~/.demitas/ecspresso.yml)
-       --service-def-src              ECS service definition source path. (default: ~/.demitas/ecs-service-def.json)
-       --task-def-src                 ECS task definition source path. (default: ~/.demitas/ecs-task-def.json)
-       --container-def-src            ECS container definition source path. (default: ~/.demitas/ecs-container-def.json)
+       --service-def-src              ECS service definition source path. (default: ~/.demitas/ecs-service-def.jsonnet)
+       --task-def-src                 ECS task definition source path. (default: ~/.demitas/ecs-task-def.jsonnet)
+       --container-def-src            ECS container definition source path. (default: ~/.demitas/ecs-container-def.jsonnet)
        --ecspresso-config-overrides   JSON/YAML string that overrides ecspresso config source.
     -s --service-def-overrides        JSON/YAML string that overrides ECS service definition source.
     -t --task-def-overrides           JSON/YAML string that overrides ECS task definition source.
@@ -40,43 +40,43 @@ cluster: my-cluster
 service: my-service
 ```
 
-### `~/.demitas/ecs-service-def.json`
+### `~/.demitas/ecs-service-def.jsonnet`
 
-```json
+```jsonnet
 {
-  "launchType": "FARGATE",
-  "networkConfiguration": {
-    "awsvpcConfiguration": {
-      "assignPublicIp": "DISABLED",
-      "securityGroups": ["sg-xxx"],
-      "subnets": ["subnet-xxx"]
+  launchType: 'FARGATE',
+  networkConfiguration: {
+    awsvpcConfiguration: {
+      assignPublicIp: 'DISABLED',
+      securityGroups: ['sg-xxx'],
+      subnets: ['subnet-xxx'],
     },
   },
-  "enableExecuteCommand": true
+  enableExecuteCommand: true,
 }
 ```
 
-### `~/.demitas/ecs-task-def.json`
+### `~/.demitas/ecs-task-def.jsonnet`
 
-```json
+```jsonnet
 {
-  "family": "my-oneshot-task",
-  "cpu": "256",
-  "memory": "512",
-  "networkMode": "awsvpc",
-  "taskRoleArn": "arn:aws:iam::xxx:role/my-role",
-  "executionRoleArn": "arn:aws:iam::xxx:role/my-exec-role",
-  "requiresCompatibilities": ["FARGATE"],
+  family: 'my-oneshot-task',
+  cpu: '256',
+  memory: '512',
+  networkMode: 'awsvpc',
+  taskRoleArn: 'arn:aws:iam::xxx:role/my-role',
+  executionRoleArn: 'arn:aws:iam::xxx:role/my-exec-role',
+  requiresCompatibilities: ['FARGATE'],
 }
 ```
 
-### `~/.demitas/ecs-task-def.json`
+### `~/.demitas/ecs-task-def.jsonnet`
 
-```json
+```jsonnet
 {
-  "name": "oneshot",
-  "cpu": 0,
-  "essential": true,
+  name: 'oneshot',
+  cpu: 0,
+  essential: true,
  }
 ```
 

@@ -3,6 +3,7 @@ package demitas
 import (
 	"fmt"
 	"io/ioutil"
+	"path/filepath"
 
 	jsonpatch "github.com/evanphx/json-patch"
 	"github.com/winebarrel/demitas/utils"
@@ -23,7 +24,13 @@ func NewContainerDefinition(path string) (*ContainerDefinition, error) {
 		return nil, fmt.Errorf("Failed to load ECS container definition: %w: %s", err, path)
 	}
 
-	if !utils.IsJSON(content) {
+	if filepath.Ext(path) == ".jsonnet" {
+		content, err = utils.ParseJsonnet(filepath.Base(path), content)
+
+		if err != nil {
+			return nil, fmt.Errorf("Failed to parse ECS container definition jsonnet: %w: %s", err, path)
+		}
+	} else if !utils.IsJSON(content) {
 		return nil, fmt.Errorf("ECS container definition is not JSON: %s", path)
 	}
 

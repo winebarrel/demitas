@@ -23,9 +23,9 @@ const (
 	DefaultEcspressoCmd       = "ecspresso"
 	DefaultConfigsDir         = ".demitas"
 	DefaultEcspressoConfigSrc = "ecspresso.yml"
-	DefaultServiceDefSrc      = "ecs-service-def.json"
-	DefaultTaskDefSrc         = "ecs-task-def.json"
-	DefaultContainerDefSrc    = "ecs-container-def.json"
+	DefaultServiceDefSrc      = "ecs-service-def.jsonnet"
+	DefaultTaskDefSrc         = "ecs-task-def.jsonnet"
+	DefaultContainerDefSrc    = "ecs-container-def.jsonnet"
 )
 
 func getEnv(k, defval string) string {

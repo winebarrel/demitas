@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/goccy/go-yaml"
+	"github.com/google/go-jsonnet"
 )
 
 func IsJSON(data []byte) bool {
@@ -27,10 +28,10 @@ func YAMLToJSON(data []byte) ([]byte, error) {
 	return js, nil
 }
 
-func JSONToYAML(bytes []byte) ([]byte, error) {
+func JSONToYAML(data []byte) ([]byte, error) {
 	var v interface{}
 
-	if err := yaml.UnmarshalWithOptions(bytes, &v, yaml.UseOrderedMap()); err != nil {
+	if err := yaml.UnmarshalWithOptions(data, &v, yaml.UseOrderedMap()); err != nil {
 		return nil, err
 	}
 
@@ -40,4 +41,15 @@ func JSONToYAML(bytes []byte) ([]byte, error) {
 		return nil, err
 	}
 	return ym, nil
+}
+
+func ParseJsonnet(filename string, data []byte) ([]byte, error) {
+	vm := jsonnet.MakeVM()
+	js, err := vm.EvaluateAnonymousSnippet(filename, string(data))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return []byte(js), nil
 }
