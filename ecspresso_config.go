@@ -3,6 +3,7 @@ package demitas
 import (
 	"fmt"
 	"io/ioutil"
+	"strings"
 
 	jsonpatch "github.com/evanphx/json-patch"
 	"github.com/winebarrel/demitas/utils"
@@ -46,4 +47,9 @@ func (ecsConf *EcspressoConfig) Patch(overrides []byte) error {
 	ecsConf.Content = patchedContent
 
 	return nil
+}
+
+func (ecsConf *EcspressoConfig) Print() {
+	ym, _ := utils.JSONToYAML(ecsConf.Content)
+	fmt.Printf("# %s\n%s\n", EcspressoConfigName, strings.TrimSpace(string(ym)))
 }

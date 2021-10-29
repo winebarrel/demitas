@@ -52,3 +52,7 @@ func (svrDef *ServiceDefinition) Patch(overrides []byte) error {
 
 	return nil
 }
+
+func (svrDef *ServiceDefinition) Print() {
+	fmt.Printf("# %s\n%s\n", ServiceDefinitionName, utils.PrettyJSON(svrDef.Content))
+}

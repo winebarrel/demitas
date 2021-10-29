@@ -53,3 +53,10 @@ func ParseJsonnet(filename string, data []byte) ([]byte, error) {
 
 	return []byte(js), nil
 }
+
+func PrettyJSON(data []byte) string {
+	var js json.RawMessage
+	_ = json.Unmarshal(data, &js)
+	js, _ = json.MarshalIndent(js, "", "  ")
+	return string(js)
+}

@@ -14,6 +14,7 @@ import (
 type Options struct {
 	demitas.RunOptions
 	demitas.BuildOptions
+	PrintConfig bool
 }
 
 var version string
@@ -88,6 +89,7 @@ func parseArgs() *Options {
 	flaggy.String(&svrDefOverridesStr, "s", "service-def-overrides", "JSON/YAML string that overrides ECS service definition source.")
 	flaggy.String(&taskDefOverridesStr, "t", "task-def-overrides", "JSON/YAML string that overrides ECS task definition source.")
 	flaggy.String(&containerDefOverridesStr, "c", "container-def-overrides", "JSON/YAML string that overrides ECS container definition source.")
+	flaggy.Bool(&opts.PrintConfig, "n", "print-config", "Display configs only.")
 	flaggy.Parse()
 
 	opts.EcspressoConfigOverrides = []byte(ecsConfOverridesStr)

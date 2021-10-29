@@ -12,6 +12,7 @@ import (
 type RunOptions struct {
 	EcspressoPath    string
 	EcspressoOptions []string
+	PrintConfig      bool
 }
 
 type Runner struct {

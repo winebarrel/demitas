@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/winebarrel/demitas"
@@ -37,9 +38,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = demitas.RunTask(&opts.RunOptions, ecsConf, svrDef, taskDef)
+	if opts.PrintConfig {
+		ecsConf.Print()
+		fmt.Println()
+		svrDef.Print()
+		fmt.Println()
+		taskDef.Print()
+	} else {
+		err = demitas.RunTask(&opts.RunOptions, ecsConf, svrDef, taskDef)
 
-	if err != nil {
-		log.Fatal(err)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }

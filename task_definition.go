@@ -64,3 +64,7 @@ func (taskDef *TaskDefinition) Patch(overrides []byte, containerDef *ContainerDe
 
 	return nil
 }
+
+func (taskDef *TaskDefinition) Print() {
+	fmt.Printf("# %s\n%s\n", TaskDefinitionName, utils.PrettyJSON(taskDef.Content))
+}
