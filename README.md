@@ -26,7 +26,7 @@ demitas - Wrapper for ecspresso that creates task definitions at run time.
   Environment Variables:
     DEMITAS_CONFIGS_DIR   Configuration file base directory.  (default: ~/.demitas)
     DEMITAS_PROFILE       Configuration profile directory.  (default: "")
-                          If "database" is set, configs file will be read from "$DEMITAS_CONFIGS_DIR/database"
+                          If "database" is set, configs file will be read from "$DEMITAS_CONFIGS_DIR/database/..."
 ```
 
 ## Example Configurations
