@@ -49,7 +49,7 @@ service: my-service
     "awsvpcConfiguration": {
       "assignPublicIp": "DISABLED",
       "securityGroups": ["sg-xxx"],
-      "subnets": ["subnet-xxx"].
+      "subnets": ["subnet-xxx"]
     },
   },
   "enableExecuteCommand": true
