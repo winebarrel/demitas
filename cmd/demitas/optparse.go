@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"os/user"
 	"path/filepath"
 
@@ -20,11 +21,22 @@ var version string
 const (
 	Description               = "TODO" // TODO
 	DefaultEcspressoCmd       = "ecspresso"
-	DefaultEcspressoConfigSrc = ".demitas/ecspresso.yml"
-	DefaultServiceDefSrc      = ".demitas/ecs-service-def.json"
-	DefaultTaskDefSrc         = ".demitas/ecs-task-def.json"
-	DefaultContainerDefSrc    = ".demitas/ecs-container-def.json"
+	DefaultConfigsDir         = ".demitas"
+	DefaultEcspressoConfigSrc = "ecspresso.yml"
+	DefaultServiceDefSrc      = "ecs-service-def.json"
+	DefaultTaskDefSrc         = "ecs-task-def.json"
+	DefaultContainerDefSrc    = "ecs-container-def.json"
 )
+
+func getEnv(k, defval string) string {
+	v, ok := os.LookupEnv(k)
+
+	if ok {
+		return v
+	} else {
+		return defval
+	}
+}
 
 func parseArgs() *Options {
 	currUser, err := user.Current()
@@ -33,15 +45,18 @@ func parseArgs() *Options {
 		log.Fatalf("Failed to get the current user: %s", err)
 	}
 
+	configs_dir := getEnv("DEMITAS_CONFIGS_DIR", DefaultConfigsDir)
+	profile := getEnv("DEMITAS_PROFILE", "")
+
 	opts := &Options{
 		RunOptions: demitas.RunOptions{
 			EcspressoPath: DefaultEcspressoCmd,
 		},
 		BuildOptions: demitas.BuildOptions{
-			EcspressoConfigSrc: filepath.Join(currUser.HomeDir, DefaultEcspressoConfigSrc),
-			ServiceDefSrc:      filepath.Join(currUser.HomeDir, DefaultServiceDefSrc),
-			TaskDefSrc:         filepath.Join(currUser.HomeDir, DefaultTaskDefSrc),
-			ContainerDefSrc:    filepath.Join(currUser.HomeDir, DefaultContainerDefSrc),
+			EcspressoConfigSrc: filepath.Join(currUser.HomeDir, configs_dir, profile, DefaultEcspressoConfigSrc),
+			ServiceDefSrc:      filepath.Join(currUser.HomeDir, configs_dir, profile, DefaultServiceDefSrc),
+			TaskDefSrc:         filepath.Join(currUser.HomeDir, configs_dir, profile, DefaultTaskDefSrc),
+			ContainerDefSrc:    filepath.Join(currUser.HomeDir, configs_dir, profile, DefaultContainerDefSrc),
 		},
 	}
 
