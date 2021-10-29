@@ -111,3 +111,9 @@ $ demitas -c '{command: [echo, hello], image: bosybox}' -- --dry-run
 }
 2021/10/10 22:33:44 my-cluster/my-service DRY RUN OK
 ```
+
+## FAQ
+
+**Q:** Will the created task definitions be deleted?
+
+**A:** No.
