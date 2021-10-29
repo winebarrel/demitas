@@ -19,7 +19,7 @@ type Options struct {
 var version string
 
 const (
-	Description               = "TODO" // TODO
+	Description               = "Wrapper for ecspresso that creates task definitions at run time."
 	DefaultEcspressoCmd       = "ecspresso"
 	DefaultConfigsDir         = ".demitas"
 	DefaultEcspressoConfigSrc = "ecspresso.yml"
@@ -64,6 +64,18 @@ func parseArgs() *Options {
 	var svrDefOverridesStr string
 	var taskDefOverridesStr string
 	var containerDefOverridesStr string
+
+	flaggy.DefaultParser.AdditionalHelpAppend = `
+  Trailing Arguments:
+    Arguments after "--" is passed to "ecspresso run".
+    e.g. demitas -c 'image: ...' -- --color --wait-until=running --debug
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Environment Variables:
+    DEMITAS_CONFIGS_DIR   Configuration file base directory.  (default: ` + filepath.Join(currUser.HomeDir, DefaultConfigsDir) + `)
+    DEMITAS_PROFILE       Configuration profile directory.  (default: "")
+                          If "database" is set, configs file will be read from "$DEMITAS_CONFIGS_DIR/database"
+`
 
 	flaggy.SetDescription(Description)
 	flaggy.SetVersion(version)
@@ -123,7 +135,6 @@ func parseArgs() *Options {
 		opts.ContainerDefOverrides = js
 	}
 
-	// TODO: Add Help
 	opts.EcspressoOptions = make([]string, len(flaggy.TrailingArguments))
 	copy(opts.EcspressoOptions, flaggy.TrailingArguments)
 

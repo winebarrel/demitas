@@ -3,7 +3,7 @@
 ## Usage
 
 ```
-demitas - TODO
+demitas - Wrapper for ecspresso that creates task definitions at run time.
 
   Flags:
        --version                      Displays the program version string.
@@ -17,12 +17,14 @@ demitas - TODO
     -s --service-def-overrides        JSON/YAML string that overrides ECS service definition source.
     -t --task-def-overrides           JSON/YAML string that overrides ECS task definition source.
     -c --container-def-overrides      JSON/YAML string that overrides ECS container definition source.
-```
 
-```sh
-demitas \
-  -c '{image: busybox, command: [echo, test]}' \
-  -t 'networkMode: awsvpc' \
-  -s 'networkConfiguration: awsvpcConfiguration: securityGroups: [sg-123]' \
-  -- --dry-run
+  Trailing Arguments:
+    Arguments after "--" is passed to "ecspresso run".
+    e.g. demitas -c 'image: ...' -- --color --wait-until=running --debug
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Environment Variables:
+    DEMITAS_CONFIGS_DIR   Configuration file base directory.  (default: /Users/sugawara/.demitas)
+    DEMITAS_PROFILE       Configuration profile directory.  (default: "")
+                          If "database" is set, configs file will be read from "$DEMITAS_CONFIGS_DIR/database"
 ```
