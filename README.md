@@ -114,6 +114,6 @@ $ demitas -c '{command: [echo, hello], image: bosybox}' -- --dry-run
 
 ## FAQ
 
-**Q:** Will the created task definitions be deleted?
+**Q:** Will the created ECS task definitions be deleted?
 
 **A:** No.
