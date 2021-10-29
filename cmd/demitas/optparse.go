@@ -46,8 +46,8 @@ func parseArgs() *Options {
 		log.Fatalf("Failed to get the current user: %s", err)
 	}
 
-	configs_dir := getEnv("DEMITAS_CONFIGS_DIR", DefaultConfigsDir)
-	profile := getEnv("DEMITAS_PROFILE", "")
+	configs_dir := getEnv("DMTS_CONF_DIR", DefaultConfigsDir)
+	profile := getEnv("DMTS_PROFILE", "")
 
 	opts := &Options{
 		RunOptions: demitas.RunOptions{
@@ -73,23 +73,23 @@ func parseArgs() *Options {
                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Environment Variables:
-    DEMITAS_CONFIGS_DIR   Configuration file base directory.  (default: ` + filepath.Join(currUser.HomeDir, DefaultConfigsDir) + `)
-    DEMITAS_PROFILE       Configuration profile directory.  (default: "")
-                          If "database" is set, configs file will be read from "$DEMITAS_CONFIGS_DIR/database/..."
+    DMTS_CONF_DIR   Configuration file base directory.  (default: ` + filepath.Join(currUser.HomeDir, DefaultConfigsDir) + `)
+    DMTS_PROFILE    Configuration profile directory.  (default: "")
+                    If "database" is set, configs file will be read from "$DMTS_CONF_DIR/database/..."
 `
 
 	flaggy.SetDescription(Description)
 	flaggy.SetVersion(version)
-	flaggy.String(&opts.EcspressoPath, "", "ecspresso-cmd", "ecspresso command path.")
-	flaggy.String(&opts.EcspressoConfigSrc, "", "ecspresso-config-src", "ecspresso config source path.")
-	flaggy.String(&opts.ServiceDefSrc, "", "service-def-src", "ECS service definition source path.")
-	flaggy.String(&opts.TaskDefSrc, "", "task-def-src", "ECS task definition source path.")
-	flaggy.String(&opts.ContainerDefSrc, "", "container-def-src", "ECS container definition source path.")
-	flaggy.String(&ecsConfOverridesStr, "", "ecspresso-config-overrides", "JSON/YAML string that overrides ecspresso config source.")
-	flaggy.String(&svrDefOverridesStr, "s", "service-def-overrides", "JSON/YAML string that overrides ECS service definition source.")
-	flaggy.String(&taskDefOverridesStr, "t", "task-def-overrides", "JSON/YAML string that overrides ECS task definition source.")
-	flaggy.String(&containerDefOverridesStr, "c", "container-def-overrides", "JSON/YAML string that overrides ECS container definition source.")
-	flaggy.Bool(&opts.PrintConfig, "n", "print-config", "Display configs only.")
+	flaggy.String(&opts.EcspressoPath, "", "ecsp-cmd", "ecspresso command path.")
+	flaggy.String(&opts.EcspressoConfigSrc, "E", "ecsp-conf-src", "ecspresso config source path.")
+	flaggy.String(&opts.ServiceDefSrc, "S", "svr-def-src", "ECS service definition source path.")
+	flaggy.String(&opts.TaskDefSrc, "T", "task-def-src", "ECS task definition source path.")
+	flaggy.String(&opts.ContainerDefSrc, "C", "cont-def-src", "ECS container definition source path.")
+	flaggy.String(&ecsConfOverridesStr, "e", "ecsp-conf-ovr", "JSON/YAML string that overrides ecspresso config source.")
+	flaggy.String(&svrDefOverridesStr, "s", "svr-def-ovr", "JSON/YAML string that overrides ECS service definition source.")
+	flaggy.String(&taskDefOverridesStr, "t", "task-def-ovr", "JSON/YAML string that overrides ECS task definition source.")
+	flaggy.String(&containerDefOverridesStr, "c", "cont-def-ovr", "JSON/YAML string that overrides ECS container definition source.")
+	flaggy.Bool(&opts.PrintConfig, "n", "print-conf", "Display configs only.")
 	flaggy.Parse()
 
 	opts.EcspressoConfigOverrides = []byte(ecsConfOverridesStr)
