@@ -143,3 +143,9 @@ $ demitas -c '{command: [echo, hello], image: "public.ecr.aws/runecast/busybox:1
 **Q:** Will the created ECS task definitions be deleted?
 
 **A:** No.
+
+##
+
+**Q:** Will IAM roles be created automatically?
+
+**A:** No.
