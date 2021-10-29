@@ -8,18 +8,18 @@ Wrapper for [ecspresso](https://github.com/kayac/ecspresso) that creates task de
 demitas - Wrapper for ecspresso that creates task definitions at run time.
 
   Flags:
-       --version                      Displays the program version string.
-    -h --help                         Displays help with available flag, subcommand, and positional value parameters.
-       --ecspresso-cmd                ecspresso command path. (default: ecspresso)
-       --ecspresso-config-src         ecspresso config source path. (default: ~/.demitas/ecspresso.yml)
-       --service-def-src              ECS service definition source path. (default: ~/.demitas/ecs-service-def.jsonnet)
-       --task-def-src                 ECS task definition source path. (default: ~/.demitas/ecs-task-def.jsonnet)
-       --container-def-src            ECS container definition source path. (default: ~/.demitas/ecs-container-def.jsonnet)
-       --ecspresso-config-overrides   JSON/YAML string that overrides ecspresso config source.
-    -s --service-def-overrides        JSON/YAML string that overrides ECS service definition source.
-    -t --task-def-overrides           JSON/YAML string that overrides ECS task definition source.
-    -c --container-def-overrides      JSON/YAML string that overrides ECS container definition source.
-    -n --print-config                 Display configs only.
+       --version         Displays the program version string.
+    -h --help            Displays help with available flag, subcommand, and positional value parameters.
+       --ecsp-cmd        ecspresso command path. (default: ecspresso)
+    -E --ecsp-conf-src   ecspresso config source path. (default: ~/.demitas/ecspresso.yml)
+    -S --svr-def-src     ECS service definition source path. (default: ~/.demitas/ecs-service-def.jsonnet)
+    -T --task-def-src    ECS task definition source path. (default: ~/.demitas/ecs-task-def.jsonnet)
+    -C --cont-def-src    ECS container definition source path. (default: ~/.demitas/ecs-container-def.jsonnet)
+    -e --ecsp-conf-ovr   JSON/YAML string that overrides ecspresso config source.
+    -s --svr-def-ovr     JSON/YAML string that overrides ECS service definition source.
+    -t --task-def-ovr    JSON/YAML string that overrides ECS task definition source.
+    -c --cont-def-ovr    JSON/YAML string that overrides ECS container definition source.
+    -n --print-conf      Display configs only.
 
   Trailing Arguments:
     Arguments after "--" is passed to "ecspresso run".
@@ -27,9 +27,9 @@ demitas - Wrapper for ecspresso that creates task definitions at run time.
                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Environment Variables:
-    DEMITAS_CONFIGS_DIR   Configuration file base directory.  (default: ~/.demitas)
-    DEMITAS_PROFILE       Configuration profile directory.  (default: "")
-                          If "database" is set, configs file will be read from "$DEMITAS_CONFIGS_DIR/database/..."
+    DMTS_CONF_DIR   Configuration file base directory.  (default: ~/.demitas)
+    DMTS_PROFILE    Configuration profile directory.  (default: "")
+                    If "database" is set, configs file will be read from "$DMTS_CONF_DIR/database/..."
 ```
 
 ## Installation
