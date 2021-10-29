@@ -19,6 +19,7 @@ demitas - Wrapper for ecspresso that creates task definitions at run time.
     -s --service-def-overrides        JSON/YAML string that overrides ECS service definition source.
     -t --task-def-overrides           JSON/YAML string that overrides ECS task definition source.
     -c --container-def-overrides      JSON/YAML string that overrides ECS container definition source.
+    -n --print-config                 Display configs only.
 
   Trailing Arguments:
     Arguments after "--" is passed to "ecspresso run".
