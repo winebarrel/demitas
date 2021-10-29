@@ -70,20 +70,28 @@ service: my-service
 }
 ```
 
-### `~/.demitas/ecs-task-def.jsonnet`
+### `~/.demitas/ecs-container-def.jsonnet`
 
 ```jsonnet
 {
   name: 'oneshot',
   cpu: 0,
   essential: true,
- }
+  logConfiguration: {
+    logDriver: 'awslogs',
+    options: {
+      'awslogs-group': '/ecs/oneshot',
+      'awslogs-region': 'ap-northeast-1',
+      'awslogs-stream-prefix': 'ecs',
+    },
+  },
+}
 ```
 
 ## Execution Example
 
 ```sh
-$ demitas -c '{command: [echo, hello], image: bosybox}' -- --dry-run
+$ demitas -c '{command: [echo, hello], image: "public.ecr.aws/runecast/busybox:1.33.1"}' -- --dry-run
 2021/10/10 22:33:44 my-cluster/my-service Running task
 2021/10/10 22:33:44 my-cluster/my-service task definition:
 {
@@ -95,7 +103,15 @@ $ demitas -c '{command: [echo, hello], image: bosybox}' -- --dry-run
       ],
       "cpu": 0,
       "essential": true,
-      "image": "bosybox",
+      "image": "public.ecr.aws/runecast/busybox:1.33.1",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/busybox",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
       "name": "oneshot"
     }
   ],
