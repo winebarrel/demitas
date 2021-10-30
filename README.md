@@ -101,9 +101,14 @@ service: my-service
 ## Execution Example
 
 ```sh
-$ demitas -c '{command: [echo, hello], image: "public.ecr.aws/runecast/busybox:1.33.1"}' -- --dry-run
-2021/10/10 22:33:44 my-cluster/my-service Running task
-2021/10/10 22:33:44 my-cluster/my-service task definition:
+$ demitas \
+  -e 'service: my-service2' \
+  -s 'networkConfiguration: {awsvpcConfiguration: {securityGroups: [sg-zzz]}}' \
+  -c '{command: [echo, hello], image: "public.ecr.aws/runecast/busybox:1.33.1"}' \
+  -- --dry-run
+
+2021/10/10 22:33:44 my-service2/my-cluster Running task
+2021/10/10 22:33:44 my-service2/my-cluster task definition:
 {
   "containerDefinitions": [
     {
@@ -135,7 +140,7 @@ $ demitas -c '{command: [echo, hello], image: "public.ecr.aws/runecast/busybox:1
   ],
   "taskRoleArn": "arn:aws:iam::xxx:role/my-exec-role",
 }
-2021/10/10 22:33:44 my-cluster/my-service DRY RUN OK
+2021/10/10 22:33:44 my-service2/my-cluster DRY RUN OK
 ```
 
 ## FAQ
