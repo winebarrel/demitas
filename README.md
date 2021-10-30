@@ -11,6 +11,8 @@ demitas - Wrapper for ecspresso that creates task definitions at run time.
        --version         Displays the program version string.
     -h --help            Displays help with available flag, subcommand, and positional value parameters.
        --ecsp-cmd        ecspresso command path. (default: ecspresso)
+    -d --conf-dir        Configuration file base directory. (default: ~/.demitas)
+    -p --profile         Configuration profile directory.
     -E --ecsp-conf-src   ecspresso config source path. (default: ~/.demitas/ecspresso.yml)
     -S --svr-def-src     ECS service definition source path. (default: ~/.demitas/ecs-service-def.jsonnet)
     -T --task-def-src    ECS task definition source path. (default: ~/.demitas/ecs-task-def.jsonnet)
@@ -27,9 +29,9 @@ demitas - Wrapper for ecspresso that creates task definitions at run time.
                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Environment Variables:
-    DMTS_CONF_DIR   Configuration file base directory.  (default: ~/.demitas)
-    DMTS_PROFILE    Configuration profile directory.  (default: "")
-                    If "database" is set, configs file will be read from "$DMTS_CONF_DIR/database/..."
+    DMTS_CONF_DIR (--conf-dir)   Configuration file base directory.  (default: ~/.demitas)
+    DMTS_PROFILE  (--profile)    Configuration profile directory.
+                                 If "database" is set, configs file will be read from "$DMTS_CONF_DIR/database/..."
 ```
 
 ## Installation
