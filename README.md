@@ -112,7 +112,7 @@ service: my-service
 $ demitas \
   -e 'service: my-service2' \
   -s 'networkConfiguration: {awsvpcConfiguration: {securityGroups: [sg-zzz]}}' \
-  -c 'image: "public.ecr.aws/runecast/busybox:1.33.1", command: [echo, hello]' \
+  -c '{image: "public.ecr.aws/runecast/busybox:1.33.1", command: [echo, hello]}' \
   -- --dry-run
 
 2021/10/10 22:33:44 my-service2/my-cluster Running task
