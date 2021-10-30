@@ -1,5 +1,5 @@
 SHELL   := /bin/bash
-VERSION := v0.3.0
+VERSION := v0.4.0
 GOOS    := $(shell go env GOOS)
 GOARCH  := $(shell go env GOARCH)
 
