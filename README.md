@@ -56,7 +56,7 @@ service: my-service
 
 ```jsonnet
 {
-  //launchType: 'FARGATE',
+  launchType: 'FARGATE',
   networkConfiguration: {
     awsvpcConfiguration: {
       assignPublicIp: 'DISABLED',
@@ -65,12 +65,12 @@ service: my-service
     },
   },
   enableExecuteCommand: true,
-  capacityProviderStrategy: [
-    {
-      capacityProvider: 'FARGATE_SPOT',
-      weight: 1,
-    },
-  ],
+  //capacityProviderStrategy: [
+  //  {
+  //    capacityProvider: 'FARGATE_SPOT',
+  //    weight: 1,
+  //  },
+  //],
 }
 ```
 
