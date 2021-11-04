@@ -4,7 +4,7 @@ set -e
 STONE_IMAGE=public.ecr.aws/o0p0b7e7/stone
 
 function usage() {
-  echo 'Usage: demitaspf [-p PROFILE] -c CLUSTER -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT' 1>&2
+  echo 'Usage: demitas-pf [-p PROFILE] -c CLUSTER -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT' 1>&2
 }
 
 function stop_task() {
