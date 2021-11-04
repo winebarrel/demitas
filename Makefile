@@ -1,5 +1,5 @@
 SHELL   := /bin/bash
-VERSION := v0.4.0
+VERSION := v0.4.1
 GOOS    := $(shell go env GOOS)
 GOARCH  := $(shell go env GOARCH)
 
@@ -16,8 +16,8 @@ vet:
 
 .PHONY: package
 package: clean vet build
-	gzip demitas -c > demitas_$(VERSION)_$(GOOS)_$(GOARCH).gz
-	sha1sum demitas_$(VERSION)_$(GOOS)_$(GOARCH).gz > demitas_$(VERSION)_$(GOOS)_$(GOARCH).gz.sha1sum
+	tar zcf > demitas_$(VERSION)_$(GOOS)_$(GOARCH).tar.gz demitas demitaspf
+	sha1sum demitas_$(VERSION)_$(GOOS)_$(GOARCH).tar.gz > demitas_$(VERSION)_$(GOOS)_$(GOARCH).tar.gz.sha1sum
 
 .PHONY: clean
 clean:
