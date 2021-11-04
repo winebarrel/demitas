@@ -153,6 +153,8 @@ $ demitas \
 
 ### Port forwarding
 
+NOTE: Please install [https://github.com/winebarrel/ecs-exec-pf](ecs-exec-pf) in advance.
+
 ```sh
 $ demitaspf
 Usage: demitaspf [-p PROFILE] -c CLUSTER -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT
