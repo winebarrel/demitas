@@ -175,15 +175,3 @@ Waiting for connections...
 $ nc -vz localhost 15432
 Connection to localhost port 15432 [tcp/*] succeeded!
 ```
-
-## FAQ
-
-**Q:** Will the created ECS task definitions be deleted?
-
-**A:** No.
-
-##
-
-**Q:** Will IAM roles be created automatically?
-
-**A:** No.
