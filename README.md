@@ -153,7 +153,7 @@ $ demitas \
 
 ### Port forwarding
 
-NOTE: Please install [https://github.com/winebarrel/ecs-exec-pf](ecs-exec-pf) in advance.
+NOTE: Please install [ecs-exec-pf](https://github.com/winebarrel/ecs-exec-pf) in advance.
 
 ```sh
 $ demitaspf
