@@ -151,6 +151,29 @@ $ demitas \
 2021/10/10 22:33:44 my-service2/my-cluster DRY RUN OK
 ```
 
+### Port forwarding
+
+```sh
+$ demitaspf
+Usage: demitaspf [-p PROFILE] -c CLUSTER -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT
+```
+
+```sh
+$ demitaspf -c my-cluster -h my-db -r 5432 -l 15432
+Start ECS task for port forwarding...
+ECS task is running: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Start port forwarding...
+
+Starting session with SessionId: user-xxxxxxxxxxxxxxxxx
+Port 15432 opened for sessionId user-xxxxxxxxxxxxxxxxx.
+Waiting for connections...
+```
+
+```sh
+$ nc -vz localhost 15432
+Connection to localhost port 15432 [tcp/*] succeeded!
+```
+
 ## FAQ
 
 **Q:** Will the created ECS task definitions be deleted?

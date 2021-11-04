@@ -1,0 +1,69 @@
+#!/bin/bash
+set -e
+
+STONE_IMAGE=public.ecr.aws/o0p0b7e7/stone
+
+function usage() {
+  echo 'Usage: demitaspf [-p PROFILE] -c CLUSTER -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT' 1>&2
+}
+
+function stop_task() {
+  echo "Stop ECS task: $TASK_ID"
+  aws ecs stop-task --cluster "$CLUSTER" --task "$TASK_ID" > /dev/null
+  echo 'done'
+}
+
+while getopts p:c:h:r:l: OPT
+do
+  case $OPT in
+    p)
+      PROFILE="$OPTARG"
+    ;;
+    c)
+      CLUSTER="$OPTARG"
+    ;;
+    h)
+      REMOTE_HOST="$OPTARG"
+    ;;
+    r)
+      REMOTE_PORT="$OPTARG"
+    ;;
+    l)
+      LOCAL_PORT="$OPTARG"
+    ;;
+    *)
+      usage
+      exit 1
+    ;;
+  esac
+done
+
+if [ -z "$CLUSTER" -o -z "$REMOTE_HOST" -o -z "$REMOTE_PORT" -o -z "$LOCAL_PORT" ]; then
+  usage
+  exit 1
+fi
+
+CONTAINER_OVERRIDES='{image: "'"$STONE_IMAGE"'", command:["'"$REMOTE_HOST:$REMOTE_PORT"'", "'"$REMOTE_PORT"'"]}'
+
+if [ -n "$PROFILE" ]; then
+  DEMITAS_OPTS="$DEMITAS_OPTS -p $PROFILE"
+fi
+
+ECSPRESSO_POTS='--wait-until=running'
+
+echo 'Start ECS task for port forwarding...'
+
+LINE=( $(demitas $DEMITAS_OPTS -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_POTS | grep 'Task ID') )
+TASK_ID="${LINE[5]}"
+
+if [ -z "$TASK_ID" ]; then
+  echo 'error: Started task cannot be found'
+fi
+
+echo "ECS task is running: $TASK_ID"
+
+trap stop_task SIGINT
+
+echo 'Start port forwarding...'
+
+ecs-exec-pf -c "$CLUSTER" -t "$TASK_ID" -p "$REMOTE_PORT" -l "$LOCAL_PORT"
