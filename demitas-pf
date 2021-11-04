@@ -1,10 +1,11 @@
 #!/bin/bash
 set -e
 
+: ${DMTS_CONF_DIR:=~/.demitas}
 STONE_IMAGE=public.ecr.aws/o0p0b7e7/stone
 
 function usage() {
-  echo 'Usage: demitas-pf [-p PROFILE] -c CLUSTER -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT' 1>&2
+  echo 'Usage: demitas-pf [-p PROFILE] [ -c CLUSTER ] -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT' 1>&2
 }
 
 function stop_task() {
@@ -38,12 +39,24 @@ do
   esac
 done
 
-if [ -z "$CLUSTER" -o -z "$REMOTE_HOST" -o -z "$REMOTE_PORT" -o -z "$LOCAL_PORT" ]; then
+if [ -z "$REMOTE_HOST" -o -z "$REMOTE_PORT" -o -z "$LOCAL_PORT" ]; then
   usage
   exit 1
 fi
 
 CONTAINER_OVERRIDES='{image: "'"$STONE_IMAGE"'", command:["'"$REMOTE_HOST:$REMOTE_PORT"'", "'"$REMOTE_PORT"'"]}'
+
+if [ -z "$CLUSTER" ]; then
+  set +e
+  CLUSTER_LINE=( $(grep ^cluster: $DMTS_CONF_DIR/$PROFILE/ecspresso.yml 2> /dev/null) )
+  set -e
+  CLUSTER="${CLUSTER_LINE[1]}"
+
+  if [ -z "$CLUSTER" ]; then
+    echo 'Please specify ECS cluster' 1>&2
+    exit 1
+  fi
+fi
 
 if [ -n "$PROFILE" ]; then
   DEMITAS_OPTS="$DEMITAS_OPTS -p $PROFILE"

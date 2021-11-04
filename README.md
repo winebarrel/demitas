@@ -157,11 +157,11 @@ NOTE: Please install [ecs-exec-pf](https://github.com/winebarrel/ecs-exec-pf) in
 
 ```sh
 $ demitas-pf
-Usage: demitas-pf [-p PROFILE] -c CLUSTER -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT
+Usage: demitas-pf [-p PROFILE] [-c CLUSTER] -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT
 ```
 
 ```sh
-$ demitas-pf -c my-cluster -h my-db -r 5432 -l 15432
+$ demitas-pf -p my-profile -h my-db -r 5432 -l 15432
 Start ECS task for port forwarding...
 ECS task is running: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 Start port forwarding...
