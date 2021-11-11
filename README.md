@@ -175,3 +175,17 @@ Waiting for connections...
 $ nc -vz localhost 15432
 Connection to localhost port 15432 [tcp/*] succeeded!
 ```
+
+### ECS Exec with new container
+
+```sh
+$ demitas-exec -p pool-app-stg-db
+Start ECS task...
+ECS task is running: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+The Session Manager plugin was installed successfully. Use the AWS CLI to start a session.
+
+
+Starting session with SessionId: ecs-execute-command-xxxxxxxxxxxxxxxxx
+root@ip-10-10-10-10:/#
+```

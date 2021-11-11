@@ -17,7 +17,7 @@ vet:
 .PHONY: package
 package: clean vet build
 	tar zcf demitas_$(VERSION)_$(GOOS)_$(GOARCH).tar.gz demitas demitas-pf
-	sha1sum demitas_$(VERSION)_$(GOOS)_$(GOARCH).tar.gz > demitas_$(VERSION)_$(GOOS)_$(GOARCH).tar.gz.sha1sum
+	shasum -a 256 demitas_$(VERSION)_$(GOOS)_$(GOARCH).tar.gz > demitas_$(VERSION)_$(GOOS)_$(GOARCH).tar.gz.sha256sum
 
 .PHONY: clean
 clean:

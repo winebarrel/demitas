@@ -1,0 +1,81 @@
+#!/bin/bash
+set -e
+
+: ${DMTS_CONF_DIR:=~/.demitas}
+: ${IMAGE:=public.ecr.aws/lts/ubuntu:latest}
+: ${COMMAND:=bash}
+
+function usage() {
+  echo 'Usage: demitas-exec [-p PROFILE] [ -c CLUSTER ] [ -i IMAGE ] [ -e COMMAND ]' 1>&2
+}
+
+function stop_task() {
+  echo "Stopping ECS task... (Please wait for a while): $TASK_ID"
+  aws ecs stop-task --cluster "$CLUSTER" --task "$TASK_ID" > /dev/null
+  echo 'done'
+}
+
+while getopts p:c:i:e: OPT
+do
+  case $OPT in
+    p)
+      PROFILE="$OPTARG"
+    ;;
+    c)
+      CLUSTER="$OPTARG"
+    ;;
+    i)
+      IMAGE="$OPTARG"
+    ;;
+    e)
+      COMMAND="$OPTARG"
+    ;;
+    *)
+      usage
+      exit 1
+    ;;
+  esac
+done
+
+CONTAINER_OVERRIDES='{image: "'"$IMAGE"'", command:["sleep", "infinity"]}'
+
+if [ -z "$CLUSTER" ]; then
+  set +e
+  CLUSTER_LINE=( $(grep ^cluster: $DMTS_CONF_DIR/$PROFILE/ecspresso.yml 2> /dev/null) )
+  set -e
+  CLUSTER="${CLUSTER_LINE[1]}"
+
+  if [ -z "$CLUSTER" ]; then
+    echo 'Please specify ECS cluster' 1>&2
+    exit 1
+  fi
+fi
+
+if [ -n "$PROFILE" ]; then
+  DEMITAS_OPTS="$DEMITAS_OPTS -p $PROFILE"
+fi
+
+ECSPRESSO_POTS='--wait-until=running'
+
+echo 'Start ECS task...'
+
+LINE=( $(demitas $DEMITAS_OPTS -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_POTS | grep 'Task ID') )
+TASK_ID="${LINE[5]}"
+
+if [ -z "$TASK_ID" ]; then
+  echo 'error: Started task cannot be found'
+fi
+
+echo "ECS task is running: $TASK_ID"
+
+trap stop_task SIGINT
+set +e
+
+while true; do
+  aws ecs execute-command --cluster "$CLUSTER" --task "$TASK_ID" --interactive --command echo >/dev/null 2>/dev/null
+  [ $? -eq 0 ] && break
+  sleep 1
+done
+
+aws ecs execute-command --cluster "$CLUSTER" --task "$TASK_ID" --interactive --command "$COMMAND"
+stop_task
