@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if [ -n "$DMTS_DEBUG" ]; then
+  set -x
+fi
+
 : ${DMTS_CONF_DIR:=~/.demitas}
 STONE_IMAGE=public.ecr.aws/o0p0b7e7/stone
 

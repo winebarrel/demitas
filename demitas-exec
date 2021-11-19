@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if [ -n "$DMTS_DEBUG" ]; then
+  set -x
+fi
+
 : ${DMTS_CONF_DIR:=~/.demitas}
 : ${IMAGE:=public.ecr.aws/lts/ubuntu:latest}
 : ${COMMAND:=bash}
