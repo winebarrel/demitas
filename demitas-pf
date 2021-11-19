@@ -72,7 +72,7 @@ ECSPRESSO_POTS='--wait-until=running'
 echo 'Start ECS task for port forwarding...'
 
 set +e
-DEMITAS_OUT=$(demitas $DEMITAS_OPTS -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_POTS --dry-run 2> /dev/null)
+DEMITAS_OUT=$(demitas $DEMITAS_OPTS -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_POTS --dry-run 2>&1 > /dev/null)
 
 if [ $? -ne 0 ]; then
   echo "demitas dry-run failed:"
