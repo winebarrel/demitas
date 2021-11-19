@@ -15,6 +15,7 @@ if [ $# -eq 0 ]; then
 fi
 
 function stop_task() {
+  trap ':' SIGINT
   echo "Stopping ECS task... (Please wait for a while): $TASK_ID"
   aws ecs stop-task --cluster "$CLUSTER" --task "$TASK_ID" > /dev/null
   echo 'done'
