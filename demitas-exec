@@ -9,6 +9,11 @@ function usage() {
   echo 'Usage: demitas-exec [-p PROFILE] [ -c CLUSTER ] [ -i IMAGE ] [ -e COMMAND ]' 1>&2
 }
 
+if [ $# -eq 0 ]; then
+  usage
+  exit 0
+fi
+
 function stop_task() {
   echo "Stopping ECS task... (Please wait for a while): $TASK_ID"
   aws ecs stop-task --cluster "$CLUSTER" --task "$TASK_ID" > /dev/null
