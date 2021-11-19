@@ -65,6 +65,16 @@ ECSPRESSO_POTS='--wait-until=running'
 
 echo 'Start ECS task...'
 
+set +e
+DEMITAS_OUT=$(demitas $DEMITAS_OPTS -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_POTS --dry-run 2> /dev/null)
+
+if [ $? -ne 0 ]; then
+  echo "demitas dry-run failed:"
+  echo $DEMITAS_OUT
+  exit 1
+fi
+set -e
+
 LINE=( $(demitas $DEMITAS_OPTS -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_POTS | grep 'Task ID') )
 TASK_ID="${LINE[5]}"
 
