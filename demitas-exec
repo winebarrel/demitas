@@ -6,8 +6,8 @@ if [ -n "$DMTS_DEBUG" ]; then
 fi
 
 : ${DMTS_CONF_DIR:=~/.demitas}
-: ${IMAGE:=public.ecr.aws/lts/ubuntu:latest}
-: ${COMMAND:=bash}
+: ${DMTS_EXEC_IMAGE:=public.ecr.aws/lts/ubuntu:latest}
+: ${DMTS_EXEC_COMMAND:=bash}
 
 function usage() {
   echo 'Usage: demitas-exec [-p PROFILE] [ -c CLUSTER ] [ -i IMAGE ] [ -e COMMAND ]' 1>&2
@@ -35,10 +35,10 @@ do
       CLUSTER="$OPTARG"
     ;;
     i)
-      IMAGE="$OPTARG"
+      DMTS_EXEC_IMAGE="$OPTARG"
     ;;
     e)
-      COMMAND="$OPTARG"
+      DMTS_EXEC_COMMAND="$OPTARG"
     ;;
     *)
       usage
@@ -47,7 +47,7 @@ do
   esac
 done
 
-CONTAINER_OVERRIDES='{image: "'"$IMAGE"'", command:["sleep", "infinity"]}'
+CONTAINER_OVERRIDES='{image: "'"$DMTS_EXEC_IMAGE"'", command:["sleep", "infinity"]}'
 
 if [ -z "$CLUSTER" ]; then
   set +e
@@ -97,5 +97,5 @@ while true; do
   sleep 1
 done
 
-aws ecs execute-command --cluster "$CLUSTER" --task "$TASK_ID" --interactive --command "$COMMAND"
+aws ecs execute-command --cluster "$CLUSTER" --task "$TASK_ID" --interactive --command "$DMTS_EXEC_COMMAND"
 stop_task
