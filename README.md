@@ -37,6 +37,8 @@ demitas - Wrapper for ecspresso that creates task definitions at run time.
 ## Installation
 
 ```sh
+brew tap winebarrel/ecs-exec-pf
+brew install ecs-exec-pf
 brew tap winebarrel/demitas
 brew install demitas
 ```
