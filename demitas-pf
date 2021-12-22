@@ -9,7 +9,7 @@ fi
 STONE_IMAGE=public.ecr.aws/o0p0b7e7/stone
 
 function usage() {
-  echo 'Usage: demitas-pf [ --conf-dir=$DMTS_CONF_DIR ] [-p PROFILE] [ -c CLUSTER ] -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT' 1>&2
+  echo 'Usage: demitas-pf [ --conf-dir=$DMTS_CONF_DIR ] [-p PROFILE] [ -c CLUSTER ] [ -f family ] -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT' 1>&2
 }
 
 function stop_task() {
@@ -23,7 +23,7 @@ if [ $# -eq 0 ]; then
   exit 0
 fi
 
-while getopts p:c:h:r:l:-: OPT; do
+while getopts p:c:h:r:l:f:-: OPT; do
   optarg="$OPTARG"
 
   if [ "$OPT" = - ]; then
@@ -34,19 +34,25 @@ while getopts p:c:h:r:l:-: OPT; do
 
   case "-$OPT" in
     -p)
-      PROFILE="$OPTARG"
+      PROFILE="$optarg"
     ;;
     -c)
-      CLUSTER="$OPTARG"
+      CLUSTER="$optarg"
     ;;
     -h)
-      REMOTE_HOST="$OPTARG"
+      REMOTE_HOST="$optarg"
     ;;
     -r)
-      REMOTE_PORT="$OPTARG"
+      REMOTE_PORT="$optarg"
     ;;
     -l)
-      LOCAL_PORT="$OPTARG"
+      LOCAL_PORT="$optarg"
+    ;;
+    -f)
+      FAMILY="$optarg"
+    ;;
+    --conf-dir)
+      DMTS_CONF_DIR="$optarg"
     ;;
     *)
       usage
@@ -76,6 +82,10 @@ if [ -n "$PROFILE" ]; then
   DEMITAS_OPTS="$DEMITAS_OPTS -p $PROFILE"
 fi
 
+if [ -n "$FAMILY" ]; then
+  TASK_OVERRIDES='{family:"'"$FAMILY"'"}'
+fi
+
 export DMTS_CONF_DIR
 CONTAINER_OVERRIDES='{image: "'"$STONE_IMAGE"'", command:["'"$REMOTE_HOST:$REMOTE_PORT"'", "'"$REMOTE_PORT"'"]}'
 ECSPRESSO_POTS='--wait-until=running'
@@ -83,16 +93,16 @@ ECSPRESSO_POTS='--wait-until=running'
 echo 'Start ECS task for port forwarding...'
 
 set +e
-DEMITAS_OUT=$(demitas $DEMITAS_OPTS -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_POTS --dry-run 2>&1 > /dev/null)
+DEMITAS_OUT=$(demitas $DEMITAS_OPTS -t "$TASK_OVERRIDES" -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_POTS --dry-run 2>&1 > /dev/null)
 
 if [ $? -ne 0 ]; then
-  echo "demitas dry-run failed: demitas $DEMITAS_OPTS -c '$CONTAINER_OVERRIDES' -- $ECSPRESSO_POTS --dry-run"
+  echo "demitas dry-run failed: demitas $DEMITAS_OPTS -t '$TASK_OVERRIDES' -c '$CONTAINER_OVERRIDES' -- $ECSPRESSO_POTS --dry-run"
   echo $DEMITAS_OUT
   exit 1
 fi
 set -e
 
-LINE=( $(demitas $DEMITAS_OPTS -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_POTS | grep 'Task ID') )
+LINE=( $(demitas $DEMITAS_OPTS -t "$TASK_OVERRIDES" -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_POTS | grep 'Task ID') )
 TASK_ID="${LINE[5]}"
 
 if [ -z "$TASK_ID" ]; then
