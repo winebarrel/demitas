@@ -2,10 +2,10 @@ package demitas
 
 import (
 	"fmt"
-	"io/ioutil"
-	"path/filepath"
+	"os"
 
 	jsonpatch "github.com/evanphx/json-patch"
+	"github.com/valyala/fastjson"
 	"github.com/winebarrel/demitas/utils"
 )
 
@@ -17,21 +17,22 @@ type ContainerDefinition struct {
 	Content []byte
 }
 
-func NewContainerDefinition(path string) (*ContainerDefinition, error) {
-	content, err := ioutil.ReadFile(path)
+func NewContainerDefinition(path string, taskDefPath string) (*ContainerDefinition, error) {
+	var content []byte
+	var err error
 
-	if err != nil {
-		return nil, fmt.Errorf("Failed to load ECS container definition: %w: %s", err, path)
-	}
-
-	if filepath.Ext(path) == ".jsonnet" {
-		content, err = utils.ParseJsonnet(filepath.Base(path), content)
+	if _, err = os.Stat(path); err != nil {
+		content, err = readContainerDefFromTaskDef(taskDefPath)
 
 		if err != nil {
-			return nil, fmt.Errorf("Failed to parse ECS container definition jsonnet: %w: %s", err, path)
+			return nil, fmt.Errorf("failed to load ECS task definition (instead of ECS container definition): %w: %s", err, taskDefPath)
 		}
-	} else if !utils.IsJSON(content) {
-		return nil, fmt.Errorf("ECS container definition is not JSON: %s", path)
+	} else {
+		content, err = utils.ReadJSONorJsonnet(path)
+
+		if err != nil {
+			return nil, fmt.Errorf("failed to load ECS container definition: %w: %s", err, path)
+		}
 	}
 
 	containerDef := &ContainerDefinition{
@@ -42,13 +43,42 @@ func NewContainerDefinition(path string) (*ContainerDefinition, error) {
 }
 
 func (containerDef *ContainerDefinition) Patch(overrides []byte) error {
-	patchedContent, err := jsonpatch.MergePatch(containerDef.Content, overrides)
+	patchedContent0, err := jsonpatch.MergePatch(containerDef.Content, []byte(`{"logConfiguration":null}`))
 
 	if err != nil {
-		return fmt.Errorf("Failed to patch ECS container definition: %w", err)
+		return fmt.Errorf("failed to patch ECS container definition: %w", err)
+	}
+
+	patchedContent, err := jsonpatch.MergePatch(patchedContent0, overrides)
+
+	if err != nil {
+		return fmt.Errorf("failed to patch ECS container definition: %w", err)
 	}
 
 	containerDef.Content = patchedContent
 
 	return nil
+}
+
+func readContainerDefFromTaskDef(path string) ([]byte, error) {
+	content, err := utils.ReadJSONorJsonnet(path)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var p fastjson.Parser
+	v, err := p.ParseBytes(content)
+
+	if err != nil {
+		return nil, err
+	}
+
+	containerDef := v.GetObject("containerDefinitions", "0")
+
+	if containerDef == nil {
+		return nil, fmt.Errorf("'containerDefinitions.0' is not found in ECS task definition: %s", path)
+	}
+
+	return containerDef.MarshalTo(nil), nil
 }

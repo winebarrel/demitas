@@ -11,8 +11,8 @@ type BuildOptions struct {
 	ContainerDefOverrides    []byte
 }
 
-func BuildContainerDefinition(path string, overrides []byte) (*ContainerDefinition, error) {
-	containerDef, err := NewContainerDefinition(path)
+func BuildContainerDefinition(path string, taskDefPath string, overrides []byte) (*ContainerDefinition, error) {
+	containerDef, err := NewContainerDefinition(path, taskDefPath)
 
 	if err != nil {
 		return nil, err

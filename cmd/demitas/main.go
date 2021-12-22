@@ -14,7 +14,7 @@ func init() {
 func main() {
 	opts := parseArgs()
 
-	containerDef, err := demitas.BuildContainerDefinition(opts.ContainerDefSrc, opts.ContainerDefOverrides)
+	containerDef, err := demitas.BuildContainerDefinition(opts.ContainerDefSrc, opts.TaskDefSrc, opts.ContainerDefOverrides)
 
 	if err != nil {
 		log.Fatal(err)

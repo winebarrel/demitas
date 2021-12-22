@@ -21,13 +21,13 @@ func NewEcspressoConfig(path string) (*EcspressoConfig, error) {
 	content, err := ioutil.ReadFile(path)
 
 	if err != nil {
-		return nil, fmt.Errorf("Failed to load ecspresso config: %w: %s", err, path)
+		return nil, fmt.Errorf("failed to load ecspresso config: %w: %s", err, path)
 	}
 
 	js, err := utils.YAMLToJSON(content)
 
 	if err != nil {
-		return nil, fmt.Errorf("Failed to parse ecspresso config: %w: %s", err, path)
+		return nil, fmt.Errorf("failed to parse ecspresso config: %w: %s", err, path)
 	}
 
 	ecsConf := &EcspressoConfig{
@@ -41,7 +41,7 @@ func (ecsConf *EcspressoConfig) Patch(overrides []byte) error {
 	patchedContent, err := jsonpatch.MergePatch(ecsConf.Content, overrides)
 
 	if err != nil {
-		return fmt.Errorf("Failed to patch ecspresso config: %w", err)
+		return fmt.Errorf("failed to patch ecspresso config: %w", err)
 	}
 
 	ecsConf.Content = patchedContent

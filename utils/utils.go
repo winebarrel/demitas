@@ -2,6 +2,10 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/goccy/go-yaml"
 	"github.com/google/go-jsonnet"
@@ -43,9 +47,9 @@ func JSONToYAML(data []byte) ([]byte, error) {
 	return ym, nil
 }
 
-func ParseJsonnet(filename string, data []byte) ([]byte, error) {
+func EvaluateJsonnet(filename string) ([]byte, error) {
 	vm := jsonnet.MakeVM()
-	js, err := vm.EvaluateAnonymousSnippet(filename, string(data))
+	js, err := vm.EvaluateFile(filename)
 
 	if err != nil {
 		return nil, err
@@ -59,4 +63,34 @@ func PrettyJSON(data []byte) string {
 	_ = json.Unmarshal(data, &js)
 	js, _ = json.MarshalIndent(js, "", "  ")
 	return string(js)
+}
+
+func ReadJSONorJsonnet(path string) ([]byte, error) {
+	var content []byte
+
+	_, err := os.Stat(path)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if filepath.Ext(path) == ".jsonnet" {
+		content, err = EvaluateJsonnet(path)
+
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		content, err = ioutil.ReadFile(path)
+
+		if err != nil {
+			return nil, err
+		}
+
+		if !IsJSON(content) {
+			return nil, fmt.Errorf("definition is not JSON: %s", path)
+		}
+	}
+
+	return content, nil
 }
