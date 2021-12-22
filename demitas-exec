@@ -82,6 +82,11 @@ if [ -n "$PROFILE" ]; then
   DEMITAS_OPTS="$DEMITAS_OPTS -p $PROFILE"
 fi
 
+if [ -n "$(aws ecs describe-clusters --cluster $CLUSTER --output text --query 'failures')" ]; then
+  echo "error: Cluster not found: $CLUSTER"
+  exit 1
+fi
+
 export DMTS_CONF_DIR
 ECSPRESSO_POTS='--wait-until=running'
 
