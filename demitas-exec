@@ -10,7 +10,7 @@ fi
 : ${DMTS_EXEC_COMMAND:=bash}
 
 function usage() {
-  echo 'Usage: demitas-exec [ --conf-dir=$DMTS_CONF_DIR ] [-p PROFILE] [ -c CLUSTER ] [ -i IMAGE ] [ -e COMMAND ] [ -f family ] [ --use-def-image ]' 1>&2
+  echo 'Usage: demitas-exec [ --conf-dir=$DMTS_CONF_DIR ] [-p PROFILE] [ -c CLUSTER ] [ -i IMAGE ] [ -e COMMAND ] [ -f family ] [ --use-def-image ] [ --skip-stop ]' 1>&2
 }
 
 if [ $# -eq 0 ]; then
@@ -55,6 +55,9 @@ while getopts p:c:i:e:f:-: OPT; do
     ;;
     --use-def-image)
       USE_DEF_IMAGE=1
+    ;;
+    --skip-stop)
+      SKIP_STOP=1
     ;;
     *)
       usage
@@ -118,7 +121,10 @@ fi
 
 echo "ECS task is running: $TASK_ID"
 
-trap stop_task SIGINT
+if [ ! $SKIP_STOP ]; then
+  trap stop_task SIGINT
+fi
+
 set +e
 
 while true; do
@@ -128,4 +134,17 @@ while true; do
 done
 
 aws ecs execute-command --cluster "$CLUSTER" --task "$TASK_ID" --interactive --command "$DMTS_EXEC_COMMAND"
-stop_task
+
+if [ ! $SKIP_STOP ]; then
+  stop_task
+else
+  cat <<EOS
+ECS task is still running.
+
+Re-login command:
+  aws ecs execute-command --cluster $CLUSTER --task $TASK_ID --command $DMTS_EXEC_COMMAND --interactive
+
+Task stop command:
+  aws ecs stop-task --cluster $CLUSTER --task $TASK_ID
+EOS
+fi
