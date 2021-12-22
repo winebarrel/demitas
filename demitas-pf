@@ -9,7 +9,7 @@ fi
 STONE_IMAGE=public.ecr.aws/o0p0b7e7/stone
 
 function usage() {
-  echo 'Usage: demitas-pf [-p PROFILE] [ -c CLUSTER ] -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT' 1>&2
+  echo 'Usage: demitas-pf [ --conf-dir=$DMTS_CONF_DIR ] [-p PROFILE] [ -c CLUSTER ] -h REMOTE_HOST -r REMOTE_PORT -l LOCAL_PORT' 1>&2
 }
 
 function stop_task() {
@@ -23,22 +23,29 @@ if [ $# -eq 0 ]; then
   exit 0
 fi
 
-while getopts p:c:h:r:l: OPT
-do
-  case $OPT in
-    p)
+while getopts p:c:h:r:l:-: OPT; do
+  optarg="$OPTARG"
+
+  if [ "$OPT" = - ]; then
+    OPT="-${OPTARG%%=*}"
+    optarg="${OPTARG/${OPTARG%%=*}/}"
+    optarg="${optarg#=}"
+  fi
+
+  case "-$OPT" in
+    -p)
       PROFILE="$OPTARG"
     ;;
-    c)
+    -c)
       CLUSTER="$OPTARG"
     ;;
-    h)
+    -h)
       REMOTE_HOST="$OPTARG"
     ;;
-    r)
+    -r)
       REMOTE_PORT="$OPTARG"
     ;;
-    l)
+    -l)
       LOCAL_PORT="$OPTARG"
     ;;
     *)
@@ -52,8 +59,6 @@ if [ -z "$REMOTE_HOST" -o -z "$REMOTE_PORT" -o -z "$LOCAL_PORT" ]; then
   usage
   exit 1
 fi
-
-CONTAINER_OVERRIDES='{image: "'"$STONE_IMAGE"'", command:["'"$REMOTE_HOST:$REMOTE_PORT"'", "'"$REMOTE_PORT"'"]}'
 
 if [ -z "$CLUSTER" ]; then
   set +e
@@ -71,6 +76,8 @@ if [ -n "$PROFILE" ]; then
   DEMITAS_OPTS="$DEMITAS_OPTS -p $PROFILE"
 fi
 
+export DMTS_CONF_DIR
+CONTAINER_OVERRIDES='{image: "'"$STONE_IMAGE"'", command:["'"$REMOTE_HOST:$REMOTE_PORT"'", "'"$REMOTE_PORT"'"]}'
 ECSPRESSO_POTS='--wait-until=running'
 
 echo 'Start ECS task for port forwarding...'

@@ -74,32 +74,32 @@ func writeTemporaryConfigs(ecsConf *EcspressoConfig, svrDef *ServiceDefinition, 
 	err := ioutil.WriteFile(TaskDefinitionName, taskDef.Content, os.FileMode(0o644))
 
 	if err != nil {
-		return fmt.Errorf("Failed to write ECS task definition: %w", err)
+		return fmt.Errorf("failed to write ECS task definition: %w", err)
 	}
 
 	err = ioutil.WriteFile(ServiceDefinitionName, svrDef.Content, os.FileMode(0o644))
 
 	if err != nil {
-		return fmt.Errorf("Failed to write ECS service definition: %w", err)
+		return fmt.Errorf("failed to write ECS service definition: %w", err)
 	}
 
 	ecsConfOverrides := fmt.Sprintf(`{"service_definition":"%s","task_definition":"%s"}`, ServiceDefinitionName, TaskDefinitionName)
 	ecsConfJson, err := jsonpatch.MergePatch(ecsConf.Content, []byte(ecsConfOverrides))
 
 	if err != nil {
-		return fmt.Errorf("Failed to update ecspresso config: %w", err)
+		return fmt.Errorf("failed to update ecspresso config: %w", err)
 	}
 
 	ecsConfYaml, err := utils.JSONToYAML(ecsConfJson)
 
 	if err != nil {
-		return fmt.Errorf("Failed to convert ecspresso config: %w", err)
+		return fmt.Errorf("failed to convert ecspresso config: %w", err)
 	}
 
 	err = ioutil.WriteFile(EcspressoConfigName, ecsConfYaml, os.FileMode(0o644))
 
 	if err != nil {
-		return fmt.Errorf("Failed to write ecspresso config: %w", err)
+		return fmt.Errorf("failed to write ecspresso config: %w", err)
 	}
 
 	return nil

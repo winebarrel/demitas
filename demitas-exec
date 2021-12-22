@@ -10,7 +10,7 @@ fi
 : ${DMTS_EXEC_COMMAND:=bash}
 
 function usage() {
-  echo 'Usage: demitas-exec [-p PROFILE] [ -c CLUSTER ] [ -i IMAGE ] [ -e COMMAND ]' 1>&2
+  echo 'Usage: demitas-exec [ --conf-dir=$DMTS_CONF_DIR ] [-p PROFILE] [ -c CLUSTER ] [ -i IMAGE ] [ -e COMMAND ] [ --use-def-image ]' 1>&2
 }
 
 if [ $# -eq 0 ]; then
@@ -25,20 +25,33 @@ function stop_task() {
   echo 'done'
 }
 
-while getopts p:c:i:e: OPT
-do
-  case $OPT in
-    p)
-      PROFILE="$OPTARG"
+while getopts p:c:i:e:-: OPT; do
+  optarg="$OPTARG"
+
+  if [ "$OPT" = - ]; then
+    OPT="-${OPTARG%%=*}"
+    optarg="${OPTARG/${OPTARG%%=*}/}"
+    optarg="${optarg#=}"
+  fi
+
+  case "-$OPT" in
+    -p)
+      PROFILE="$optarg"
     ;;
-    c)
-      CLUSTER="$OPTARG"
+    -c)
+      CLUSTER="$optarg"
     ;;
-    i)
-      DMTS_EXEC_IMAGE="$OPTARG"
+    -i)
+      DMTS_EXEC_IMAGE="$optarg"
     ;;
-    e)
-      DMTS_EXEC_COMMAND="$OPTARG"
+    -e)
+      DMTS_EXEC_COMMAND="$optarg"
+    ;;
+    --conf-dir)
+      DMTS_CONF_DIR="$optarg"
+    ;;
+    --use-def-image)
+      USE_DEF_IMAGE=1
     ;;
     *)
       usage
@@ -47,7 +60,11 @@ do
   esac
 done
 
-CONTAINER_OVERRIDES='{image: "'"$DMTS_EXEC_IMAGE"'", command:["sleep", "infinity"]}'
+if [ $USE_DEF_IMAGE ]; then
+  CONTAINER_OVERRIDES='{command:["sleep", "infinity"]}'
+else
+  CONTAINER_OVERRIDES='{image: "'"$DMTS_EXEC_IMAGE"'", command:["sleep", "infinity"]}'
+fi
 
 if [ -z "$CLUSTER" ]; then
   set +e
@@ -70,6 +87,7 @@ if [ -n "$(aws ecs describe-clusters --cluster $CLUSTER --output text --query 'f
   exit 1
 fi
 
+export DMTS_CONF_DIR
 ECSPRESSO_POTS='--wait-until=running'
 
 echo 'Start ECS task...'

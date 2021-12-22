@@ -2,8 +2,6 @@ package demitas
 
 import (
 	"fmt"
-	"io/ioutil"
-	"path/filepath"
 
 	jsonpatch "github.com/evanphx/json-patch"
 	"github.com/winebarrel/demitas/utils"
@@ -18,20 +16,10 @@ type TaskDefinition struct {
 }
 
 func NewTaskDefinition(path string) (*TaskDefinition, error) {
-	content, err := ioutil.ReadFile(path)
+	content, err := utils.ReadJSONorJsonnet(path)
 
 	if err != nil {
-		return nil, fmt.Errorf("Failed to load ECS task definition: %w: %s", err, path)
-	}
-
-	if filepath.Ext(path) == ".jsonnet" {
-		content, err = utils.ParseJsonnet(filepath.Base(path), content)
-
-		if err != nil {
-			return nil, fmt.Errorf("Failed to parse ECS task definition jsonnet: %w: %s", err, path)
-		}
-	} else if !utils.IsJSON(content) {
-		return nil, fmt.Errorf("ECS task definition is not JSON: %s", path)
+		return nil, fmt.Errorf("failed to load ECS task definition: %w: %s", err, path)
 	}
 
 	taskDef := &TaskDefinition{
@@ -49,15 +37,16 @@ func (taskDef *TaskDefinition) Patch(overrides []byte, containerDef *ContainerDe
 		patchedContent, err = jsonpatch.MergePatch(patchedContent, overrides)
 
 		if err != nil {
-			return fmt.Errorf("Failed to patch ECS task definition: %w", err)
+			return fmt.Errorf("failed to patch ECS task definition: %w", err)
 		}
 	}
 
 	containerDefinitions := fmt.Sprintf(`{"containerDefinitions":[%s]}`, string(containerDef.Content))
 	patchedContent, err = jsonpatch.MergePatch(patchedContent, []byte(containerDefinitions))
+	fmt.Println(utils.PrettyJSON(patchedContent))
 
 	if err != nil {
-		return fmt.Errorf("Failed to patch containerDefinitions: %w", err)
+		return fmt.Errorf("failed to patch containerDefinitions: %w", err)
 	}
 
 	taskDef.Content = patchedContent

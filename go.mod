@@ -7,6 +7,7 @@ require (
 	github.com/goccy/go-yaml v1.9.4
 	github.com/google/go-jsonnet v0.17.0
 	github.com/integrii/flaggy v1.4.4
+	github.com/valyala/fastjson v1.6.3
 )
 
 require (
