@@ -76,6 +76,9 @@ func readContainerDefFromTaskDef(path string) ([]byte, error) {
 
 	containerDef := v.GetObject("containerDefinitions", "0")
 
+	// NOTE: Ignore dependsOn
+	containerDef.Del("dependsOn")
+
 	if containerDef == nil {
 		return nil, fmt.Errorf("'containerDefinitions.0' is not found in ECS task definition: %s", path)
 	}
