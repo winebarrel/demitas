@@ -67,14 +67,14 @@ while getopts p:c:i:e:f:-: OPT; do
 done
 
 if [ $USE_DEF_IMAGE ]; then
-  CONTAINER_OVERRIDES='{command:["sleep", "infinity"]}'
+  CONTAINER_OVERRIDES='{entryPoint:["sleep", "infinity"]}'
 else
-  CONTAINER_OVERRIDES='{image: "'"$DMTS_EXEC_IMAGE"'", command:["sleep", "infinity"]}'
+  CONTAINER_OVERRIDES='{image: "'"$DMTS_EXEC_IMAGE"'", entryPoint:["sleep", "infinity"]}'
 fi
 
 if [ -z "$CLUSTER" ]; then
   set +e
-  CLUSTER_LINE=( $(grep ^cluster: $DMTS_CONF_DIR/$PROFILE/ecspresso.yml 2> /dev/null) )
+  CLUSTER_LINE=( $(grep ^cluster: $DMTS_CONF_DIR/$PROFILE/*.{yml,yaml} 2> /dev/null) )
   set -e
   CLUSTER="${CLUSTER_LINE[1]}"
 
@@ -98,21 +98,21 @@ if [ -n "$FAMILY" ]; then
 fi
 
 export DMTS_CONF_DIR
-ECSPRESSO_POTS='--wait-until=running'
+ECSPRESSO_OPTS="--wait-until=running ${ECSPRESSO_OPTS}"
 
 echo 'Start ECS task...'
 
 set +e
-DEMITAS_OUT=$(demitas $DEMITAS_OPTS -t "$TASK_OVERRIDES" -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_POTS --dry-run 2>&1 > /dev/null)
+DEMITAS_OUT=$(demitas $DEMITAS_OPTS -t "$TASK_OVERRIDES" -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_OPTS --dry-run 2>&1 > /dev/null)
 
 if [ $? -ne 0 ]; then
-  echo "demitas dry-run failed: demitas $DEMITAS_OPTS -t '$TASK_OVERRIDES' -c '$CONTAINER_OVERRIDES' -- $ECSPRESSO_POTS --dry-run"
+  echo "demitas dry-run failed: demitas $DEMITAS_OPTS -t '$TASK_OVERRIDES' -c '$CONTAINER_OVERRIDES' -- $ECSPRESSO_OPTS --dry-run"
   echo $DEMITAS_OUT
   exit 1
 fi
 set -e
 
-LINE=( $(demitas $DEMITAS_OPTS -t "$TASK_OVERRIDES" -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_POTS | grep 'Task ID') )
+LINE=( $(demitas $DEMITAS_OPTS -t "$TASK_OVERRIDES" -c "$CONTAINER_OVERRIDES" -- $ECSPRESSO_OPTS | grep 'Task ID') )
 TASK_ID="${LINE[5]}"
 
 if [ -z "$TASK_ID" ]; then
