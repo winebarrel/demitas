@@ -1,3 +1,9 @@
+**⚠️NOTE**
+
+**A new version is under development.**
+
+**see https://github.com/winebarrel/demitase**
+
 # demitas
 
 Wrapper for [ecspresso](https://github.com/kayac/ecspresso) that creates task definitions at run time.
