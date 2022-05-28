@@ -2,7 +2,7 @@
 
 **A new version is under development.**
 
-**see https://github.com/winebarrel/demitase**
+**see https://github.com/winebarrel/demitas2**
 
 # demitas
 
